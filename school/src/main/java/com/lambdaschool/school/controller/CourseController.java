@@ -1,11 +1,10 @@
 package com.lambdaschool.school.controller;
 
 import com.lambdaschool.school.model.Course;
+import com.lambdaschool.school.model.Instructor;
 import com.lambdaschool.school.service.CourseService;
 import com.lambdaschool.school.view.CountStudentsInCourses;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -43,6 +42,11 @@ public class CourseController
         List<Course> myCourses = courseService.findAllPageable(pageable);
         return new ResponseEntity<>(myCourses, HttpStatus.OK);
     }
+
+
+    @ApiOperation(value ="Returns all Instructors", response = Course.class, responseContainer = "List")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "List of Courses Found", response = Course.class, responseContainer = "List"),
+            @ApiResponse(code = 404, message = "List of Courses Not Found")})
     //http://localhost:2019/courses/courses/?sort=coursename,desc
     @GetMapping(value = "/courses", produces = {"application/json"})
     public ResponseEntity<?> listAllCourses()
@@ -51,12 +55,18 @@ public class CourseController
         return new ResponseEntity<>(myCourses, HttpStatus.OK);
     }
 
+    @ApiOperation(value ="Returns Count of Students in Each Course", responseContainer = "List")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "List Found",  responseContainer = "List"),
+            @ApiResponse(code = 404, message = "List Not Found")})
     @GetMapping(value = "/studcount", produces = {"application/json"})
     public ResponseEntity<?> getCountStudentsInCourses()
     {
         return new ResponseEntity<>(courseService.getCountStudentsInCourse(), HttpStatus.OK);
     }
 
+    @ApiOperation(value ="Deletes Course Depending on CourseId")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Course Deleted"),
+            @ApiResponse(code = 404, message = "Course Not Deleted")})
     @DeleteMapping("/courses/{courseid}")
     public ResponseEntity<?> deleteCourseById(@PathVariable long courseid)
     {
